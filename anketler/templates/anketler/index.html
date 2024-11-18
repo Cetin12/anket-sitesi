@@ -1,0 +1,26 @@
+{% extends 'anketler/base.html' %}
+
+{% block title %}Anketler{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">😎Anketler😎</h1>
+        {% if son_anketler %}
+            {% for soru in son_anketler %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ soru.soru_metni }}</h5>
+                    <p class="card-text text-muted">Yayınlanma: {{ soru.yayinlanma_tarihi|date:"d F Y" }}</p>
+                    <a href="{% url 'anketler:detail' soru.id %}" class="btn btn-primary">Ankete Git</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">
+                Henüz hiç anket yok.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

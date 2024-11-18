@@ -1,0 +1,47 @@
+{% extends 'anketler/base.html' %}
+
+{% block title %}{{ soru.soru_metni }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>{{ soru.soru_metni }}</h2>
+    </div>
+    <div class="card-body">
+        {% if error_message %}
+        <div class="alert alert-danger">
+            {{ error_message }}
+        </div>
+        {% endif %}
+
+        {% if daha_once_oy_kullanmis %}
+            <div class="alert alert-info">
+                Bu ankete daha önce oy kullandınız. Sonuçları görebilirsiniz:
+            </div>
+            <ul class="list-group">
+            {% for secenek in soru.secenek_set.all %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ secenek.secenek_metni }}
+                    <span class="badge bg-primary rounded-pill">{{ secenek.oylar }} oy</span>
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <form action="{% url 'anketler:vote' soru.id %}" method="post">
+                {% csrf_token %}
+                {% for secenek in soru.secenek_set.all %}
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="secenek" 
+                           id="secenek{{ forloop.counter }}" value="{{ secenek.id }}">
+                    <label class="form-check-label" for="secenek{{ forloop.counter }}">
+                        {{ secenek.secenek_metni }}
+                    </label>
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Oy Ver</button>
+                <a href="{% url 'anketler:index' %}" class="btn btn-outline-secondary">Geri Dön</a>
+            </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
